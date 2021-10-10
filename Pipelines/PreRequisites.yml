@@ -1,0 +1,46 @@
+trigger:
+- none
+
+pool:
+  vmImage: windows-latest
+
+stages:
+  - stage: Dev
+    displayName: 'Dev'
+    variables:
+      - group: PreRequisites
+    jobs:
+      - deployment: PreRequisites
+        displayName: 'Deploy Pre-Requisite Infrastructure'
+        environment: Dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureResourceManagerTemplateDeployment@3
+                  displayName: 'Deploy resource group'
+                  inputs:
+                    deploymentScope: 'Subscription'
+                    azureResourceManagerConnection: 'sp-devops-pipeline'
+                    subscriptionId: '$(PreRequisites.Subscription.Id)'
+                    location: '$(PreRequisites.ResourceGroup.Location)'
+                    templateLocation: 'Linked artifact'
+                    csmFile: 'SSE.AssetVoyage.Platform/ARM-Templates/ResourceGroup/template.json'
+                    csmParametersFile: 'SSE.AssetVoyage.Platform/ARM-Templates/ResourceGroup/parameter.json'
+                    overrideParameters: '-rgLocation "$(PreRequisites.ResourceGroup.Location)" -rgName "$(PreRequisites.ResourceGroup.Name)"'
+                    deploymentMode: 'Incremental'
+                - task: AzureResourceManagerTemplateDeployment@3
+                  displayName: 'Deploy blob storage account for storing Terraform states'
+                  inputs:
+                    deploymentScope: 'Resource Group'
+                    azureResourceManagerConnection: 'sp-devops-pipeline'
+                    subscriptionId: '$(PreRequisites.Subscription.Id)'
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
+                    location: '$(PreRequisites.ResourceGroup.Location)'
+                    templateLocation: 'Linked artifact'
+                    csmFile: 'SSE.AssetVoyage.Platform/ARM-Templates/StorageAccount/template.json'
+                    csmParametersFile: 'SSE.AssetVoyage.Platform/ARM-Templates/StorageAccount/parameter.json'
+                    overrideParameters: '-storageAccountName "$(PreRequisites.StorageAccount.Name)" -containerName "$(PreRequisites.StorageAccount.Container.Name)"'
+                    deploymentMode: 'Incremental'
