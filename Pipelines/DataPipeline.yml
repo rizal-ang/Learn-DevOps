@@ -1,7 +1,8 @@
 trigger:
 - none
 
-pool: Asset Voyage
+pool:
+  vmImage: 'windows-latest'
 
 stages:
   - stage: Test

@@ -1,7 +1,8 @@
 trigger:
 - none
 
-pool: Asset Voyage
+pool:
+  vmImage: 'windows-latest'
 
 stages:
   - stage: Development
@@ -11,9 +12,9 @@ stages:
         displayName: Deploy Infrastructure
         environment: Dev
         variables:
-          - group: Asset-Voyage-PreRequisites-NPD
-          - group: Asset-Voyage-Common
-          - group: Asset-Voyage-Dev
+          - group: PreRequisites
+          - group: Common
+          - group: Dev
           - name: System.Debug
             value: true
         strategy:
@@ -24,56 +25,48 @@ stages:
                 - task: FileTransform@1
                   displayName: 'Transform Parameter Json'
                   inputs:
-                    folderPath: '$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform'
+                    folderPath: '$(System.DefaultWorkingDirectory)/Platform'
                     fileType: 'json'
                     targetFiles: '*.json'
                 - task: PowerShell@2
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
                     targetType: 'inline'
-                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json'
+                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/parameter.json'
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-                  displayName: Install Terraform 0.14.7
+                  displayName: Install Terraform
                   inputs:
-                    terraformVersion: '0.14.7'
+                    terraformVersion: '1.0.9'
                 - task: TerraformTaskV1@0
                   enabled: true
                   displayName: Terraform Init
                   inputs:
                     provider: 'azurerm'
                     command: 'init'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    backendServiceArm: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                    workingDirectory: 'Platform/Terraform'
+                    backendServiceArm: 'sp-devops-pipeline'
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
-                    backendAzureRmKey: '$(Environment.TFState.Name)'                                
-                # - task: TerraformCLI@0
-                #   inputs:
-                #     command: 'import'
-                #     workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
-                #     environmentServiceName: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'                    
-                #     resourceAddress: 'module.Security[0].azurerm_key_vault_secret.KeyVaultSecret["ResourceGroup"]'
-                #     resourceId: 'https://assetvoyage-dev-001-kv.vault.azure.net/secrets/resource-group/c2e0540bd9644d3fad751b0934fef36e'                            
+                    backendAzureRmKey: '$(Environment.TFState.Name)'                                          
                 - task: TerraformTaskV1@0
                   enabled: true
                   displayName: Terraform Plan
                   inputs:
                     provider: 'azurerm'
                     command: 'plan'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
-                    environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                    workingDirectory: 'Platform/Terraform'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV1@0
                 #   enabled: true
                 #   displayName: Terraform Apply
                 #   inputs:
                 #     provider: 'azurerm'
                 #     command: 'apply'
-                #     workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
-                #     environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                #     workingDirectory: 'Platform/Terraform'
+                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
     dependsOn: ''
     displayName: Tst
@@ -82,9 +75,9 @@ stages:
         displayName: Deploy Infrastructure
         environment: Tst
         variables:
-          - group: Asset-Voyage-PreRequisites-NPD
-          - group: Asset-Voyage-Common
-          - group: Asset-Voyage-Tst
+          - group: PreRequisites
+          - group: Common
+          - group: Test
           - name: System.Debug
             value: true
         strategy:
@@ -95,25 +88,25 @@ stages:
                 - task: FileTransform@1
                   displayName: 'Transform Parameter Json'
                   inputs:
-                    folderPath: '$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform'
+                    folderPath: '$(System.DefaultWorkingDirectory)/Platform'
                     fileType: 'json'
                     targetFiles: '*.json'
                 - task: PowerShell@2
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
                     targetType: 'inline'
-                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json'
+                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/parameter.json'
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-                  displayName: Install Terraform 0.14.7
+                  displayName: Install Terraform
                   inputs:
-                    terraformVersion: '0.14.7'
+                    terraformVersion: '1.0.9'
                 - task: TerraformTaskV1@0
                   enabled: true
                   displayName: Terraform Init
                   inputs:
                     provider: 'azurerm'
                     command: 'init'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
+                    workingDirectory: 'Platform/Terraform'
                     backendServiceArm: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
@@ -125,8 +118,8 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'plan'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
+                    workingDirectory: 'Platform/Terraform'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
                     environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
                 - task: TerraformTaskV1@0
                   enabled: true
@@ -134,8 +127,8 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
+                    workingDirectory: 'Platform/Terraform'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
                     environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
   - stage: UAT
     dependsOn: ''
@@ -158,14 +151,14 @@ stages:
                 - task: FileTransform@1
                   displayName: 'Transform Parameter Json'
                   inputs:
-                    folderPath: '$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform'
+                    folderPath: '$(System.DefaultWorkingDirectory)/Platform'
                     fileType: 'json'
                     targetFiles: '*.json'
                 - task: PowerShell@2
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
                     targetType: 'inline'
-                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json'
+                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/parameter.json'
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
                   displayName: Install Terraform 0.14.7
                   inputs:
@@ -176,7 +169,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'init'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
+                    workingDirectory: 'Platform/Terraform'
                     backendServiceArm: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
@@ -188,8 +181,8 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'plan'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
+                    workingDirectory: 'Platform/Terraform'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
                     environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
                 - task: TerraformTaskV1@0
                   enabled: true
@@ -197,6 +190,6 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    workingDirectory: 'SSE.AssetVoyage.Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/SSE.AssetVoyage.Platform/parameter.json"'
+                    workingDirectory: 'Platform/Terraform'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
                     environmentServiceNameAzureRM: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
