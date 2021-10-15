@@ -9,7 +9,7 @@ stages:
     displayName: Dev
     jobs:
       - deployment: Deploy
-        displayName: Deploy Infrastructure
+        displayName: Deploy Dev Infrastructure
         environment: Dev
         variables:
           - group: PreRequisites
@@ -70,14 +70,12 @@ stages:
     displayName: Tst
     jobs:
       - deployment: Deploy
-        displayName: Deploy Infrastructure
+        displayName: Deploy Test Infrastructure
         environment: Tst
         variables:
           - group: PreRequisites
           - group: Common
-          - group: Test
-          - name: System.Debug
-            value: true
+          - group: Tst
         strategy:
           runOnce:
             deploy:
