@@ -24,10 +24,10 @@ resource "azurerm_data_factory" "DataFactory" {
   # This is hard-coded on purpose because it is only used in Dev environment
   # vsts_configuration {
   #   account_name    = "VSOSSE"
-  #   branch_name     = "develop"
+  #   branch_name     = "main"
   #   project_name    = "Wholesale-Asset-Voyage"
   #   repository_name = "Wholesale-Asset-Voyage"
-  #   root_folder     = "/SSE.AssetVoyage.Platform/DataFactory"
+  #   root_folder     = "/Platform/DataFactory"
   #   tenant_id       = "953b0f83-1ce6-45c3-82c9-1d847e372339"
   # }
 }

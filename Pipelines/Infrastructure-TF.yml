@@ -35,7 +35,7 @@ stages:
                   displayName: Install Terraform
                   inputs:
                     terraformVersion: '1.0.9'
-                - task: TerraformTaskV1@0
+                - task: TerraformTaskV2@2
                   enabled: true
                   displayName: Terraform Init
                   inputs:
@@ -47,7 +47,7 @@ stages:
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
                     backendAzureRmKey: '$(Environment.TFState.Name)'                                          
-                - task: TerraformTaskV1@0
+                - task: TerraformTaskV2@2
                   enabled: true
                   displayName: Terraform Plan
                   inputs:
