@@ -134,4 +134,5 @@ stages:
                 #     provider: 'azurerm'
                 #     command: 'destroy'
                 #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform'
+                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
