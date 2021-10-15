@@ -14,8 +14,8 @@ resource "azurerm_resource_group" "RG" {
 ################################################################################
 resource "azurerm_data_factory" "DataFactory" {
   name                = var.DataFactory.Name
-  location            = azurerm_resource_group.RG.Name
-  resource_group_name = azurerm_resource_group.RG.Location
+  location            = azurerm_resource_group.RG.name
+  resource_group_name = azurerm_resource_group.RG.location
 
   identity {
     type = "SystemAssigned"
@@ -36,7 +36,7 @@ resource "azurerm_data_factory" "DataFactory" {
 #Databricks + associated VNET and Subnets
 ################################################################################
 resource "azurerm_databricks_workspace" "Databricks" {
-  location                      = azurerm_resource_group.RG.Location
+  location                      = azurerm_resource_group.RG.location
   name                          = var.Databricks.Name
   resource_group_name           = azurerm_resource_group.RG.name
   managed_resource_group_name   = var.Databricks.ManagedResourceGroup
@@ -126,7 +126,7 @@ resource "azurerm_storage_account" "DataLake" {
   min_tls_version          = var.DataLake.TlsVersion
 
   network_rules {
-    bypass                     = "AzureServices"
+    # bypass                     = "AzureServices"
     default_action             = "Allow"    
   }
 }
