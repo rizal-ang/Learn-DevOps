@@ -32,7 +32,7 @@ stages:
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
                     targetType: 'inline'
-                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/parameter.json'
+                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json'
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
                   displayName: Install Terraform
                   inputs:
@@ -56,7 +56,7 @@ stages:
                     provider: 'azurerm'
                     command: 'plan'
                     workingDirectory: 'Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV1@0
                 #   enabled: true
@@ -65,7 +65,7 @@ stages:
                 #     provider: 'azurerm'
                 #     command: 'apply'
                 #     workingDirectory: 'Platform/Terraform'
-                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
     dependsOn: ''
@@ -95,7 +95,7 @@ stages:
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
                     targetType: 'inline'
-                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/parameter.json'
+                    script: 'Get-Content -Path $(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json'
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
                   displayName: Install Terraform
                   inputs:
@@ -119,7 +119,7 @@ stages:
                     provider: 'azurerm'
                     command: 'plan'
                     workingDirectory: 'Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 - task: TerraformTaskV1@0
                   enabled: true
@@ -128,5 +128,5 @@ stages:
                     provider: 'azurerm'
                     command: 'apply'
                     workingDirectory: 'Platform/Terraform'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/parameter.json"'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
