@@ -36,7 +36,6 @@ stages:
                   inputs:
                     terraformVersion: '1.0.9'
                 - task: TerraformTaskV2@2
-                  enabled: true
                   displayName: Terraform Init
                   inputs:
                     provider: 'azurerm'
@@ -48,7 +47,6 @@ stages:
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
                     backendAzureRmKey: '$(Environment.TFState.Name)'                                          
                 # - task: TerraformTaskV2@2
-                #   enabled: true
                 #   displayName: Terraform Plan
                 #   inputs:
                 #     provider: 'azurerm'
@@ -57,7 +55,6 @@ stages:
                 #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
-                #   enabled: true
                 #   displayName: Terraform Apply
                 #   inputs:
                 #     provider: 'azurerm'
@@ -66,10 +63,12 @@ stages:
                 #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 - task: TerraformTaskV2@2
+                  displayName: Terraform Destroy
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
                     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform'
+                    commandOptions: 'force-unlock -force'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
     dependsOn: ''
@@ -103,7 +102,6 @@ stages:
                   inputs:
                     terraformVersion: '1.0.9'
                 - task: TerraformTaskV2@2
-                  enabled: true
                   displayName: Terraform Init
                   inputs:
                     provider: 'azurerm'
@@ -115,7 +113,6 @@ stages:
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
                     backendAzureRmKey: '$(Environment.TFState.Name)'
                 - task: TerraformTaskV2@2
-                  enabled: true
                   displayName: Terraform Plan
                   inputs:
                     provider: 'azurerm'
@@ -124,7 +121,6 @@ stages:
                     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 - task: TerraformTaskV2@2
-                  enabled: true
                   displayName: Terraform Apply
                   inputs:
                     provider: 'azurerm'
@@ -133,6 +129,7 @@ stages:
                     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
+                #   displayName: Terraform Destroy
                 #   inputs:
                 #     provider: 'azurerm'
                 #     command: 'destroy'
