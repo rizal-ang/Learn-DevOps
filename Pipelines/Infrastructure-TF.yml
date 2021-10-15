@@ -15,8 +15,6 @@ stages:
           - group: PreRequisites
           - group: Common
           - group: Dev
-          - name: System.Debug
-            value: true
         strategy:
           runOnce:
             deploy:
