@@ -1,0 +1,57 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+  - stage: Sandbox
+    displayName: Sandbox
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Sandbox Infrastructure
+        environment: Sandbox
+        variables:
+          - group: PreRequisites
+        strategy:
+          runOnce:
+            deploy:
+              steps:                
+                - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+                  displayName: Install Terraform
+                  inputs:
+                    terraformVersion: '1.0.9'
+                - task: TerraformTaskV2@2
+                  enabled: true
+                  displayName: Terraform Init
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'init'
+                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    backendServiceArm: 'sp-devops-pipeline'
+                    backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
+                    backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
+                    backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
+                    backendAzureRmKey: '$(TerraformState.Name)'                                          
+                - task: TerraformTaskV2@2
+                  enabled: true
+                  displayName: Terraform Plan
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'plan'
+                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                - task: TerraformTaskV2@2
+                  enabled: true
+                  displayName: Terraform Apply
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                # - task: TerraformTaskV2@2
+                #   inputs:
+                #     provider: 'azurerm'
+                #     command: 'destroy'
+                #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Sandbox'
+                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
