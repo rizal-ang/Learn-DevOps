@@ -8,4 +8,6 @@ terraform {
 }
 
 provider "databricks" {}
-provider "azurerm" {}
+provider "azurerm" {
+  features {}
+}
