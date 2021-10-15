@@ -23,9 +23,9 @@ stages:
                 - task: FileTransform@1
                   displayName: 'Transform Parameter Json'
                   inputs:
-                    folderPath: '$(System.DefaultWorkingDirectory)/Platform'
+                    folderPath: '$(System.DefaultWorkingDirectory)/Platform/Terraform'
                     fileType: 'json'
-                    targetFiles: '*.json'
+                    targetFiles: 'parameter.json'
                 - task: PowerShell@2
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
@@ -84,9 +84,9 @@ stages:
                 - task: FileTransform@1
                   displayName: 'Transform Parameter Json'
                   inputs:
-                    folderPath: '$(System.DefaultWorkingDirectory)/Platform'
+                    folderPath: '$(System.DefaultWorkingDirectory)/Platform/Terraform'
                     fileType: 'json'
-                    targetFiles: '*.json'
+                    targetFiles: 'parameter.json'
                 - task: PowerShell@2
                   displayName: 'Show Transformed Parameter Json'
                   inputs:
