@@ -68,7 +68,6 @@ stages:
                     provider: 'azurerm'
                     command: 'destroy'
                     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform'
-                    # commandOptions: 'force-unlock'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
     dependsOn: ''
