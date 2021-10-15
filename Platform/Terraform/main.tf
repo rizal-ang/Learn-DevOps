@@ -14,8 +14,8 @@ resource "azurerm_resource_group" "RG" {
 ################################################################################
 resource "azurerm_data_factory" "DataFactory" {
   name                = var.DataFactory.Name
-  location            = azurerm_resource_group.RG.name
-  resource_group_name = azurerm_resource_group.RG.location
+  location            = azurerm_resource_group.RG.location
+  resource_group_name = azurerm_resource_group.RG.name
 
   identity {
     type = "SystemAssigned"
