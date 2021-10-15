@@ -67,7 +67,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    commandOptions: '-auto-approve'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform/parameter.json'
                     workingDirectory: 'Platform/Terraform'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
