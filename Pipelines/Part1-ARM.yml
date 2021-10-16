@@ -8,7 +8,7 @@ stages:
   - stage: Dev
     displayName: 'Dev'
     variables:
-      - group: PreRequisites
+      - group: ARM
     jobs:
       - deployment: PreRequisites
         displayName: 'Deploy Pre-Requisite Infrastructure'
@@ -23,24 +23,24 @@ stages:
                   inputs:
                     deploymentScope: 'Subscription'
                     azureResourceManagerConnection: 'sp-devops-pipeline'
-                    subscriptionId: '$(PreRequisites.Subscription.Id)'
-                    location: '$(PreRequisites.ResourceGroup.Location)'
+                    subscriptionId: '$(ARM.Subscription.Id)'
+                    location: '$(ARM.ResourceGroup.Location)'
                     templateLocation: 'Linked artifact'
                     csmFile: 'Platform/ARM-Templates/ResourceGroup/template.json'
                     csmParametersFile: 'Platform/ARM-Templates/ResourceGroup/parameter.json'
-                    overrideParameters: '-rgLocation "$(PreRequisites.ResourceGroup.Location)" -rgName "$(PreRequisites.ResourceGroup.Name)"'
+                    overrideParameters: '-rgLocation "$(ARM.ResourceGroup.Location)" -rgName "$(ARM.ResourceGroup.Name)"'
                     deploymentMode: 'Incremental'
                 - task: AzureResourceManagerTemplateDeployment@3
                   displayName: 'Deploy blob storage account for storing Terraform states'
                   inputs:
                     deploymentScope: 'Resource Group'
                     azureResourceManagerConnection: 'sp-devops-pipeline'
-                    subscriptionId: '$(PreRequisites.Subscription.Id)'
+                    subscriptionId: '$(ARM.Subscription.Id)'
                     action: 'Create Or Update Resource Group'
-                    resourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
-                    location: '$(PreRequisites.ResourceGroup.Location)'
+                    resourceGroupName: '$(ARM.ResourceGroup.Name)'
+                    location: '$(ARM.ResourceGroup.Location)'
                     templateLocation: 'Linked artifact'
                     csmFile: 'Platform/ARM-Templates/StorageAccount/template.json'
                     csmParametersFile: 'Platform/ARM-Templates/StorageAccount/parameter.json'
-                    overrideParameters: '-storageAccountName "$(PreRequisites.StorageAccount.Name)" -containerName "$(PreRequisites.StorageAccount.Container.Name)"'
+                    overrideParameters: '-storageAccountName "$(ARM.StorageAccount.Name)" -containerName "$(ARM.StorageAccount.Container.Name)"'
                     deploymentMode: 'Incremental'
