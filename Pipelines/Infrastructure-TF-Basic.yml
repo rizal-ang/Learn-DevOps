@@ -5,15 +5,15 @@ pool:
   vmImage: 'windows-latest'
 
 stages:
-  - stage: Sandbox
-    displayName: Sandbox
+  - stage: Basic
+    displayName: Basic
     jobs:
       - deployment: Deploy
-        displayName: Deploy Sandbox Infrastructure
-        environment: Sandbox
+        displayName: Deploy Basic Terraform Infrastructure
+        environment: Basic
         variables:
           - group: PreRequisites
-          - group: Sandbox
+          - group: Basic
         strategy:
           runOnce:
             deploy:
@@ -27,7 +27,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'init'
-                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    workingDirectory: 'Platform/Terraform-Basic'
                     backendServiceArm: 'sp-devops-pipeline'
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
@@ -38,19 +38,19 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'plan'
-                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    workingDirectory: 'Platform/Terraform-Basic'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 - task: TerraformTaskV2@2
                   displayName: Terraform Apply
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    workingDirectory: 'Platform/Terraform-Sandbox'
+                    workingDirectory: 'Platform/Terraform-Basic'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
                 #   displayName: Terraform Destroy
                 #   inputs:
                 #     provider: 'azurerm'
                 #     command: 'destroy'
-                #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Sandbox'
+                #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Basic'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
