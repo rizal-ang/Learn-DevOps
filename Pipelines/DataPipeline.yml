@@ -12,8 +12,8 @@ stages:
         displayName: Deploy Data Pipeline Codes
         environment: Tst
         variables:          
-          - group: Asset-Voyage-Common
-          - group: Asset-Voyage-Tst
+          - group: Common
+          - group: Tst
         strategy:
           runOnce:
             deploy:
@@ -23,32 +23,28 @@ stages:
                 displayName: 'Pre-requisite for ADF build: Install Node.js'
                 inputs:
                   versionSpec: '10.x'                
-                enabled: true              
               - task: Npm@1
                 displayName: 'Pre-requisite for ADF build: Install npm package'
                 inputs:
                   command: 'install'
-                  verbose: true                
-                enabled: true              
+                  verbose: true             
               - task: Npm@1
                 displayName: 'Validate and Build ADF ARM templates'
                 inputs:
                   command: 'custom'
-                  customCommand: 'run build export SSE.AssetVoyage.Platform/DataFactory /subscriptions/$(Environment.Subscription.Id)/resourceGroups/AssetVoyage-Dev-1.0-001-Platform-rg/providers/Microsoft.DataFactory/factories/AssetVoyage-Dev-001-DF "DataFactoryArmTemplate"'                
-                enabled: true              
+                  customCommand: 'run build export Platform/DataFactory /subscriptions/$(Environment.Subscription.Id)/resourceGroups/AssetVoyage-Dev-1.0-001-Platform-rg/providers/Microsoft.DataFactory/factories/AssetVoyage-Dev-001-DF "DataFactoryArmTemplate"'
               - task: AzurePowerShell@5
                 displayName: 'Stop ADF Triggers before deployment'
                 inputs:
-                  azureSubscription: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureSubscription: 'sp-devops-pipeline'
                   ScriptPath: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/PrePostDeploymentScript.ps1'
                   ScriptArguments: '-armTemplate "$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateForFactory.json" -ResourceGroupName $(Environment.ResourceGroup.Name) -DataFactoryName $(Integration.DataFactory.Name) -predeployment $true -deleteDeployment $false'
-                  azurePowerShellVersion: LatestVersion
-                enabled: true                  
+                  azurePowerShellVersion: LatestVersion           
               - task: AzureResourceManagerTemplateDeployment@3
                 displayName: 'Deploy ADF pipelines / dataset / linked services'
                 inputs:
                   deploymentScope: 'Resource Group'
-                  azureResourceManagerConnection: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureResourceManagerConnection: 'sp-devops-pipeline'
                   subscriptionId: '$(Environment.Subscription.Id)'
                   action: 'Create Or Update Resource Group'
                   resourceGroupName: '$(Environment.ResourceGroup.Name)'
@@ -71,69 +67,60 @@ stages:
                     -TR_Refresh_PBI_Dataset_properties_PL_Driver_Refresh_PBI_Datasets_parameters_KeyVaultName "$(Security.KeyVault.Name).vault.azure.net"
                     -TR_Refresh_PBI_Dataset_properties_PL_Driver_Refresh_PBI_Datasets_parameters_WorkspaceName "$(Power.BI.Workspace)"'
                   deploymentMode: 'Incremental'
-                enabled: true
               - task: AzurePowerShell@5
                 displayName: 'Start ADF Triggers'
                 inputs:
-                  azureSubscription: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureSubscription: 'sp-devops-pipeline'
                   ScriptPath: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/PrePostDeploymentScript.ps1'
                   ScriptArguments: '-armTemplate "$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateForFactory.json" -ResourceGroupName $(Environment.ResourceGroup.Name) -DataFactoryName $(Integration.DataFactory.Name) -predeployment $false -deleteDeployment $true'
                   azurePowerShellVersion: LatestVersion
-                enabled: true
               - task: AzureCLI@2
-                displayName: 'Update Data Lake metadata files'
+                displayName: 'Upload files into Data Lake'
                 inputs:
-                  azureSubscription: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureSubscription: 'sp-devops-pipeline'
                   scriptType: 'ps'
                   scriptLocation: 'inlineScript'
                   inlineScript: |                                        
-                    az storage blob upload-batch -s "SSE.AssetVoyage.Platform/DataLake/datafactory-config" -d "raw/metadata/datafactory-config" --account-name $(Storage.DataLake.Name) --auth-mode login
-                enabled: false
+                    az storage blob upload-batch -s "Platform/DataLake/datafactory-config" -d "raw/metadata/datafactory-config" --account-name $(DataLake.Name) --auth-mode login
               - task: databricksDeployScripts@0
                 displayName: 'Deploy Databricks notebooks'
                 inputs:
                   authMethod: 'bearer'
                   bearerToken: '$(Integration.Databricks.Token)'
                   region: '$(Integration.Databricks.URL)'
-                  localPath: 'SSE.AssetVoyage.Platform/Databricks/platform'
+                  localPath: 'Platform/Databricks/platform'
                   databricksPath: '/platform'
-                enabled: true
               - task: databricksDeployDBFSFilesTask@0
-                displayName: 'Deploy Databricks platform config files into DBFS'
+                displayName: 'Deploy Databricks files into Databricks File System (DBFS)'
                 inputs:
                   authMethod: 'bearer'
                   bearerToken: '$(Integration.Databricks.Token)'
                   region: '$(Integration.Databricks.URL)'
-                  LocalRootFolder: 'SSE.AssetVoyage.Platform/Databricks/platform-config'                  
+                  LocalRootFolder: 'Platform/Databricks/platform-config'  
                   TargetLocation: '/platform-config'
-                enabled: false
-
               - task: VSBuild@1
                 displayName: 'Build Visual Studio solution file'
                 inputs:
-                  solution: 'SSE.AssetVoyage.Platform/Database/*.sln'
+                  solution: 'Platform/Database/*.sln'
                   platform: 'Any CPU'
                   configuration: 'Release'
-                enabled: false
               - task: AzureCLI@2
                 displayName: 'Get Access Token for Dacpac deployment'
                 inputs:
-                  azureSubscription: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureSubscription: 'sp-devops-pipeline'
                   scriptType: 'ps'
                   scriptLocation: 'inlineScript'
                   inlineScript: |
                     $token= & az account get-access-token --resource=https://database.windows.net/ --query accessToken
                          Write-Output("##vso[task.setvariable variable=SQLToken;]$token")
-                enabled: false
               - task: SqlAzureDacpacDeployment@1
                 displayName: 'Publish Dacpac for Azure SQL DB'
                 inputs:
-                  azureSubscription: 'SSE-Sub-FieldServicesGeoSafety-NPD-Connection'
+                  azureSubscription: 'sp-devops-pipeline'
                   AuthenticationType: 'connectionString'
                   ConnectionString: 'Server=$(Database.SQLServer.Name).database.windows.net;Initial Catalog=$(Database.SQLDatabase.Name);Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
                   deployType: 'DacpacTask'
                   DeploymentAction: 'Publish'
-                  DacpacFile: '$(System.DefaultWorkingDirectory)\SSE.AssetVoyage.Platform\Database\SpareParts_SSDT_01\bin\Release\SpareParts_SSDT_01.dacpac'
+                  DacpacFile: '$(System.DefaultWorkingDirectory)\Platform\Database\SpareParts_SSDT_01\bin\Release\SpareParts_SSDT_01.dacpac'
                   IpDetectionMethod: 'AutoDetect'
                   AdditionalArguments: '/AccessToken:$(SQLToken) /p:BlockOnPossibleDataLoss=false /p:DropStatisticsNotInSource=true'
-                enabled: true
