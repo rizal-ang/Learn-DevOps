@@ -32,7 +32,7 @@ stages:
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
-                    backendAzureRmKey: '$(TerraformState.Name)'                                          
+                    backendAzureRmKey: '$(TerraformState.Name)'
                 - task: TerraformTaskV2@2
                   displayName: Terraform Plan
                   inputs:
