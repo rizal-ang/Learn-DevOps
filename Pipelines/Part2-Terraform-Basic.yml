@@ -5,12 +5,12 @@ pool:
   vmImage: 'windows-latest'
 
 stages:
-  - stage: Basic
-    displayName: Basic
+  - stage: Dev
+    displayName: Dev
     jobs:
       - deployment: Deploy
         displayName: Deploy Basic Terraform Infrastructure
-        environment: Basic
+        environment: Dev
         variables:
           - group: PreRequisites
           - group: Basic
@@ -32,7 +32,7 @@ stages:
                     backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
-                    backendAzureRmKey: '$(TerraformState.Name)'
+                    backendAzureRmKey: 'basic.tfstate'
                 - task: TerraformTaskV2@2
                   displayName: Terraform Plan
                   inputs:
