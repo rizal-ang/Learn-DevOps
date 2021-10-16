@@ -34,24 +34,24 @@ stages:
                     backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
                     backendAzureRmKey: 'basic.tfstate'
-                - task: TerraformTaskV2@2
-                  displayName: Terraform Plan
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'plan'
-                    workingDirectory: 'Platform/Terraform-Basic'
-                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
-                - task: TerraformTaskV2@2
-                  displayName: Terraform Apply
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'apply'
-                    workingDirectory: 'Platform/Terraform-Basic'
-                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
-                #   displayName: Terraform Destroy
+                #   displayName: Terraform Plan
                 #   inputs:
                 #     provider: 'azurerm'
-                #     command: 'destroy'
-                #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Basic'
+                #     command: 'plan'
+                #     workingDirectory: 'Platform/Terraform-Basic'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                # - task: TerraformTaskV2@2
+                #   displayName: Terraform Apply
+                #   inputs:
+                #     provider: 'azurerm'
+                #     command: 'apply'
+                #     workingDirectory: 'Platform/Terraform-Basic'
+                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                - task: TerraformTaskV2@2
+                  displayName: Terraform Destroy
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'destroy'
+                    workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Basic'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
