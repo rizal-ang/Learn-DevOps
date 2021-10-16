@@ -190,12 +190,6 @@ resource "azurerm_key_vault" "KeyVault" {
   }
 }
 
-resource "azurerm_key_vault_secret" "SQLAdminSecret" {
-  name         = "sql-admin-password"
-  value        = random_string.SQLAdminPassword.result
-  key_vault_id = azurerm_key_vault.KeyVault.id
-}
-
 # DevOps Service Principal
 data "azuread_service_principal" "devopsSP" {
   display_name = "sp-devops-pipeline"
@@ -206,4 +200,12 @@ resource "azurerm_key_vault_access_policy" "devOpsSPpolicy" {
   tenant_id          = data.azurerm_client_config.Current.tenant_id
   object_id          = data.azuread_service_principal.devopsSP.object_id
   secret_permissions = ["Get", "Backup", "Delete", "List", "Purge", "Recover", "Restore", "Set"]
+}
+
+resource "azurerm_key_vault_secret" "SQLAdminSecret" {
+  name         = "sql-admin-password"
+  value        = random_string.SQLAdminPassword.result
+  key_vault_id = azurerm_key_vault.KeyVault.id
+
+  depends_on = [azurerm_key_vault_access_policy.devOpsSPpolicy]
 }
