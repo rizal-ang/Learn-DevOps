@@ -17,7 +17,8 @@ stages:
         strategy:
           runOnce:
             deploy:
-              steps:                
+              steps:
+                - checkout: self                
                 - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
                   displayName: Install Terraform
                   inputs:
