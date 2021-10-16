@@ -190,7 +190,7 @@ resource "azurerm_key_vault" "KeyVault" {
   }
 }
 
-# DevOps Service Principal
+# Get DevOps Service Principal information
 data "azuread_service_principal" "devopsSP" {
   display_name = "sp-devops-pipeline"
 }
