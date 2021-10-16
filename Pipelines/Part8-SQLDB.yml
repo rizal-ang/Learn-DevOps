@@ -1,0 +1,47 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+  - stage: Test
+    displayName: Tst
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Data Pipeline Codes
+        environment: Tst
+        variables:          
+          - group: Common
+          - group: Tst
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - task: VSBuild@1
+                displayName: 'Build Visual Studio solution file'
+                inputs:
+                  solution: 'Platform/Database/*.sln'
+                  platform: 'Any CPU'
+                  configuration: 'Release'
+              - task: AzureCLI@2
+                displayName: 'Get Access Token for Dacpac deployment'
+                inputs:
+                  azureSubscription: 'sp-devops-pipeline'
+                  scriptType: 'ps'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    $token= & az account get-access-token --resource=https://database.windows.net/ --query accessToken
+                         Write-Output("##vso[task.setvariable variable=SQLToken;]$token")
+              - task: SqlAzureDacpacDeployment@1
+                displayName: 'Publish Dacpac for Azure SQL DB'
+                inputs:
+                  azureSubscription: 'sp-devops-pipeline'
+                  AuthenticationType: 'connectionString'
+                  ConnectionString: 'Server=$(SQLServer.Name).database.windows.net;Initial Catalog=$(SQLDatabase.Name);Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+                  deployType: 'DacpacTask'
+                  DeploymentAction: 'Publish'
+                  DacpacFile: '$(System.DefaultWorkingDirectory)\Platform\Database\$(SQLDatabase.SSDT)\bin\Release\$(SQLDatabase.SSDT).dacpac'
+                  IpDetectionMethod: 'AutoDetect'
+                  AdditionalArguments: '/AccessToken:$(SQLToken) /p:BlockOnPossibleDataLoss=false /p:DropStatisticsNotInSource=true'

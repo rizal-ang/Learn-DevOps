@@ -1,0 +1,72 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+  - stage: Test
+    displayName: Tst
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Data Pipeline Codes
+        environment: Tst
+        variables:          
+          - group: Common
+          - group: Tst
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self              
+              - task: NodeTool@0
+                displayName: 'Pre-requisite for ADF build: Install Node.js'
+                inputs:
+                  versionSpec: '10.x'                
+              - task: Npm@1
+                displayName: 'Pre-requisite for ADF build: Install npm package'
+                inputs:
+                  command: 'install'
+                  verbose: true             
+              - task: Npm@1
+                displayName: 'Validate and Build ADF ARM templates'
+                inputs:
+                  command: 'custom'
+                  customCommand: 'run build export Platform/DataFactory /subscriptions/$(ARM.Subscription.Id)/resourceGroups/learn-devops-dev-rg/providers/Microsoft.DataFactory/factories/learn-devops-dev-df "DataFactoryArmTemplate"'
+              - task: AzurePowerShell@5
+                displayName: 'Stop ADF Triggers before deployment'
+                inputs:
+                  azureSubscription: 'sp-devops-pipeline'
+                  ScriptPath: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/PrePostDeploymentScript.ps1'
+                  ScriptArguments: '-armTemplate "$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateForFactory.json" -ResourceGroupName $(ResourceGroup.Name) -DataFactoryName $(DataFactory.Name) -predeployment $true -deleteDeployment $false'
+                  azurePowerShellVersion: LatestVersion           
+              - task: AzureResourceManagerTemplateDeployment@3
+                displayName: 'Deploy ADF pipelines / dataset / linked services'
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: 'sp-devops-pipeline'
+                  subscriptionId: '$(ARM.Subscription.Id)'
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: '$(ResourceGroup.Name)'
+                  location: '$(ResourceGroup.Location)'
+                  csmFile: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateForFactory.json'
+                  csmParametersFile: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateParametersForFactory.json'
+                  overrideParameters: '
+                    -factoryName $(DataFactory.Name) 
+                    -LS_AzSQLDB_connectionString "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=$(Database.SQLServer.Name).database.windows.net;Initial Catalog=$(SQLDatabase.Name)" 
+                    -LS_Adls_properties_typeProperties_url "https://$(DataLake.Name).dfs.core.windows.net" 
+                    -LS_Databricks_properties_typeProperties_domain "https://$(Databricks.URL).azuredatabricks.net" 
+                    -LS_Databricks_properties_typeProperties_workspaceResourceId "/subscriptions/$(ARM.Subscription.Id)/resourceGroups/$(Environment.ResourceGroup.Name)/providers/Microsoft.Databricks/workspaces/$(Databricks.Name)" 
+                    -LS_Databricks_properties_typeProperties_newClusterNodeType "$(Databricks.JobClusterNodeType)" 
+                    -LS_Databricks_properties_typeProperties_newClusterNumOfWorker "$(Databricks.NumOfWorker)" 
+                    -LS_Databricks_properties_typeProperties_newClusterVersion "$(Databricks.JobClusterVersion)" 
+                    -LS_KeyVault_properties_typeProperties_baseUrl "https://$(KeyVault.Name).vault.azure.net/" 
+                    -LS_Maximo_properties_typeProperties_connectionString_secretName "maximo-ods-connection-string"
+                  deploymentMode: 'Incremental'
+              - task: AzurePowerShell@5
+                displayName: 'Start ADF Triggers'
+                inputs:
+                  azureSubscription: 'sp-devops-pipeline'
+                  ScriptPath: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/PrePostDeploymentScript.ps1'
+                  ScriptArguments: '-armTemplate "$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateForFactory.json" -ResourceGroupName $(ResourceGroup.Name) -DataFactoryName $(DataFactory.Name) -predeployment $false -deleteDeployment $true'
+                  azurePowerShellVersion: LatestVersion

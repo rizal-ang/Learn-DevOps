@@ -1,0 +1,45 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+  - stage: Test
+    displayName: Tst
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy Data Pipeline Codes
+        environment: Tst
+        variables:          
+          - group: Common
+          - group: Tst
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self              
+              - task: AzureCLI@2
+                displayName: 'Upload files into Data Lake'
+                inputs:
+                  azureSubscription: 'sp-devops-pipeline'
+                  scriptType: 'ps'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |                                        
+                    az storage blob upload-batch -s "Platform/DataLake/datafactory-config" -d "raw/datafactory-config" --account-name $(DataLake.Name) --auth-mode login
+              - task: databricksDeployScripts@0
+                displayName: 'Deploy Databricks notebooks'
+                inputs:
+                  authMethod: 'bearer'
+                  bearerToken: '$(Databricks.Token)'
+                  region: '$(Databricks.URL)'
+                  localPath: 'Platform/Databricks/platform'
+                  databricksPath: '/platform'
+              - task: databricksDeployDBFSFilesTask@0
+                displayName: 'Deploy Databricks files into Databricks File System (DBFS)'
+                inputs:
+                  authMethod: 'bearer'
+                  bearerToken: '$(Databricks.Token)'
+                  region: '$(Databricks.URL)'
+                  LocalRootFolder: 'Platform/Databricks/platform-config'  
+                  TargetLocation: '/platform-config'
