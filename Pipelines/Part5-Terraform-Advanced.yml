@@ -12,7 +12,7 @@ stages:
         displayName: Deploy Dev Infrastructure
         environment: Dev
         variables:
-          - group: PreRequisites
+          - group: ARM
           - group: Common
           - group: Dev
         strategy:
@@ -78,7 +78,7 @@ stages:
         displayName: Deploy Test Infrastructure
         environment: Tst
         variables:
-          - group: PreRequisites
+          - group: ARM
           - group: Common
           - group: Tst
         strategy:

@@ -12,7 +12,7 @@ stages:
         displayName: Deploy Basic Terraform Infrastructure
         environment: Dev
         variables:
-          - group: PreRequisites
+          - group: ARM
           - group: Basic
         strategy:
           runOnce:
