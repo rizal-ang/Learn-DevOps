@@ -11,6 +11,14 @@
 			"type": "string",
 			"defaultValue": "https://learndevopsdevdl.dfs.core.windows.net"
 		},
+		"dataFactory_location": {
+			"type": "string",
+			"defaultValue": "uksouth"
+		},
+		"dataFactory_identity_type": {
+			"type": "string",
+			"defaultValue": "SystemAssigned"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -37,6 +45,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"dataFactory_location": {
+						"value": "[parameters('dataFactory_location')]"
+					},
+					"dataFactory_identity_type": {
+						"value": "[parameters('dataFactory_identity_type')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"

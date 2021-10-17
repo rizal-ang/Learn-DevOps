@@ -7,6 +7,12 @@
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://learndevopsdevdl.dfs.core.windows.net"
+		},
+		"dataFactory_location": {
+			"value": "uksouth"
+		},
+		"dataFactory_identity_type": {
+			"value": "SystemAssigned"
 		}
 	}
 }
