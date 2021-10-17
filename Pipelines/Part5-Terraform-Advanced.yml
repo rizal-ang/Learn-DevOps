@@ -46,30 +46,30 @@ stages:
                     backendAzureRmStorageAccountName: '$(ARM.StorageAccount.Name)'
                     backendAzureRmContainerName: '$(ARM.StorageAccount.Container.Name)'
                     backendAzureRmKey: '$(TerraformState.Name)'
-                - task: TerraformTaskV2@2
-                  displayName: Terraform Plan
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'plan'
-                    workingDirectory: 'Platform/Terraform-Advanced'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
-                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
-                - task: TerraformTaskV2@2
-                  displayName: Terraform Apply
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'apply'
-                    workingDirectory: 'Platform/Terraform-Advanced'
-                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
-                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
-                #   displayName: Terraform Destroy
+                #   displayName: Terraform Plan
                 #   inputs:
                 #     provider: 'azurerm'
-                #     command: 'destroy'
-                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json'
+                #     command: 'plan'
                 #     workingDirectory: 'Platform/Terraform-Advanced'
+                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                # - task: TerraformTaskV2@2
+                #   displayName: Terraform Apply
+                #   inputs:
+                #     provider: 'azurerm'
+                #     command: 'apply'
+                #     workingDirectory: 'Platform/Terraform-Advanced'
+                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
+                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                - task: TerraformTaskV2@2
+                  displayName: Terraform Destroy
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'destroy'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json'
+                    workingDirectory: 'Platform/Terraform-Advanced'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
   - stage: Test
     dependsOn: ''
     displayName: Tst
