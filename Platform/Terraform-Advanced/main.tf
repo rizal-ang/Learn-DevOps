@@ -21,14 +21,13 @@ resource "azurerm_data_factory" "DataFactory" {
     type = "SystemAssigned"
   }
 
-  # This is hard-coded on purpose because it is only used in Dev environment
   # vsts_configuration {
-  #   account_name    = "VSOSSE"
+  #   account_name    = "riz-ang"
   #   branch_name     = "main"
-  #   project_name    = "Wholesale-Asset-Voyage"
-  #   repository_name = "Wholesale-Asset-Voyage"
+  #   project_name    = "Project-Egg"
+  #   repository_name = "Learn-DevOps"
   #   root_folder     = "/Platform/DataFactory"
-  #   tenant_id       = "953b0f83-1ce6-45c3-82c9-1d847e372339"
+  #   tenant_id       = "74454c60-d934-47d9-97d3-70b915f87564"
   # }
 }
 
@@ -41,7 +40,7 @@ resource "azurerm_databricks_workspace" "Databricks" {
   resource_group_name           = azurerm_resource_group.RG.name
   managed_resource_group_name   = var.Databricks.ManagedResourceGroup
   sku                           = var.Databricks.Sku
-  public_network_access_enabled = true
+  # public_network_access_enabled = true
 
   custom_parameters {
     no_public_ip        = true
