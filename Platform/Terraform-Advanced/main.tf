@@ -40,15 +40,14 @@ resource "azurerm_databricks_workspace" "Databricks" {
   resource_group_name           = azurerm_resource_group.RG.name
   managed_resource_group_name   = var.Databricks.ManagedResourceGroup
   sku                           = var.Databricks.Sku
-  # public_network_access_enabled = true
 
   custom_parameters {
     no_public_ip        = true
     virtual_network_id  = azurerm_virtual_network.DatabricksVnet.id
     public_subnet_name  = azurerm_subnet.DatabricksSubnetPublic.name
     private_subnet_name = azurerm_subnet.DatabricksSubnetPrivate.name
-    public_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.public.id
-    private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private.id
+    # public_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.public.id
+    # private_subnet_network_security_group_association_id = azurerm_subnet_network_security_group_association.private.id
   }
 }
 
