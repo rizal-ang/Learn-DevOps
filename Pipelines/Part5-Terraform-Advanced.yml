@@ -54,14 +54,14 @@ stages:
                     workingDirectory: 'Platform/Terraform-Advanced'
                     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
                     environmentServiceNameAzureRM: 'sp-devops-pipeline'
-                # - task: TerraformTaskV2@2
-                #   displayName: Terraform Apply
-                #   inputs:
-                #     provider: 'azurerm'
-                #     command: 'apply'
-                #     workingDirectory: 'Platform/Terraform-Advanced'
-                #     commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
-                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                - task: TerraformTaskV2@2
+                  displayName: Terraform Apply
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'apply'
+                    workingDirectory: 'Platform/Terraform-Advanced'
+                    commandOptions: '--var-file="$(System.DefaultWorkingDirectory)/Platform/Terraform-Advanced/parameter.json"'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
                 #   displayName: Terraform Destroy
                 #   inputs:
