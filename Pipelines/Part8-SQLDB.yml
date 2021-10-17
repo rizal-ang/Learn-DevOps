@@ -9,7 +9,7 @@ stages:
     displayName: Tst
     jobs:
       - deployment: Deploy
-        displayName: Deploy Data Pipeline Codes
+        displayName: Deploy SQL Database Codes
         environment: Tst
         variables:          
           - group: Common

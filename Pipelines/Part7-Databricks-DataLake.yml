@@ -9,7 +9,7 @@ stages:
     displayName: Tst
     jobs:
       - deployment: Deploy
-        displayName: Deploy Data Pipeline Codes
+        displayName: Deploy Databricks and Data Lake files
         environment: Tst
         variables:          
           - group: Common
@@ -26,20 +26,20 @@ stages:
                   scriptType: 'ps'
                   scriptLocation: 'inlineScript'
                   inlineScript: |                                        
-                    az storage blob upload-batch -s "Platform/DataLake/datafactory-config" -d "raw/datafactory-config" --account-name $(DataLake.Name) --auth-mode login
+                    az storage blob upload-batch -s "Platform/DataLake/" -d "bronze/" --account-name $(DataLake.Name) --auth-mode login
               - task: databricksDeployScripts@0
                 displayName: 'Deploy Databricks notebooks'
                 inputs:
                   authMethod: 'bearer'
                   bearerToken: '$(Databricks.Token)'
                   region: '$(Databricks.URL)'
-                  localPath: 'Platform/Databricks/platform'
-                  databricksPath: '/platform'
+                  localPath: 'Platform/Databricks/notebooks'
+                  databricksPath: '/notebooks'
               - task: databricksDeployDBFSFilesTask@0
                 displayName: 'Deploy Databricks files into Databricks File System (DBFS)'
                 inputs:
                   authMethod: 'bearer'
                   bearerToken: '$(Databricks.Token)'
                   region: '$(Databricks.URL)'
-                  LocalRootFolder: 'Platform/Databricks/platform-config'  
-                  TargetLocation: '/platform-config'
+                  LocalRootFolder: 'Platform/Databricks/dbfs-files'  
+                  TargetLocation: '/dbfs-files'
