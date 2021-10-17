@@ -1,0 +1,9 @@
+{
+	"name": "learn-devops-dev-df",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a28d874d-4370-4458-ad4f-323d5953b9c4",
+		"tenantId": "74454c60-d934-47d9-97d3-70b915f87564"
+	}
+}
