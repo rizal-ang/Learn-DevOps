@@ -9,7 +9,7 @@ stages:
     displayName: Tst
     jobs:
       - deployment: Deploy
-        displayName: Deploy Data Pipeline Codes
+        displayName: Deploy Data Factory Codes
         environment: Tst
         variables:          
           - group: ARM
