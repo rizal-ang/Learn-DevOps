@@ -30,17 +30,17 @@ stages:
                     command: 'init'
                     workingDirectory: 'Platform/Terraform-Basic'
                     backendServiceArm: 'sp-devops-pipeline'
-                    backendAzureRmResourceGroupName: '$(PreRequisites.ResourceGroup.Name)'
-                    backendAzureRmStorageAccountName: '$(PreRequisites.StorageAccount.Name)'
-                    backendAzureRmContainerName: '$(PreRequisites.StorageAccount.Container.Name)'
+                    backendAzureRmResourceGroupName: '$(ARM.ResourceGroup.Name)'
+                    backendAzureRmStorageAccountName: '$(ARM.StorageAccount.Name)'
+                    backendAzureRmContainerName: '$(ARM.StorageAccount.Container.Name)'
                     backendAzureRmKey: 'basic.tfstate'
-                # - task: TerraformTaskV2@2
-                #   displayName: Terraform Plan
-                #   inputs:
-                #     provider: 'azurerm'
-                #     command: 'plan'
-                #     workingDirectory: 'Platform/Terraform-Basic'
-                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                - task: TerraformTaskV2@2
+                  displayName: Terraform Plan
+                  inputs:
+                    provider: 'azurerm'
+                    command: 'plan'
+                    workingDirectory: 'Platform/Terraform-Basic'
+                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
                 # - task: TerraformTaskV2@2
                 #   displayName: Terraform Apply
                 #   inputs:
@@ -48,10 +48,10 @@ stages:
                 #     command: 'apply'
                 #     workingDirectory: 'Platform/Terraform-Basic'
                 #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
-                - task: TerraformTaskV2@2
-                  displayName: Terraform Destroy
-                  inputs:
-                    provider: 'azurerm'
-                    command: 'destroy'
-                    workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Basic'
-                    environmentServiceNameAzureRM: 'sp-devops-pipeline'
+                # - task: TerraformTaskV2@2
+                #   displayName: Terraform Destroy
+                #   inputs:
+                #     provider: 'azurerm'
+                #     command: 'destroy'
+                #     workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Terraform-Basic'
+                #     environmentServiceNameAzureRM: 'sp-devops-pipeline'
