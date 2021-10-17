@@ -12,7 +12,7 @@ stages:
     jobs:
       - deployment: PreRequisites
         displayName: 'Deploy Pre-Requisite Infrastructure'
-        # environment: Dev
+        environment: Dev
         strategy:
           runOnce:
             deploy:
