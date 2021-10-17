@@ -54,7 +54,7 @@ stages:
                   csmParametersFile: '$(Build.Repository.LocalPath)/DataFactoryArmTemplate/ARMTemplateParametersForFactory.json'
                   overrideParameters: '
                     -factoryName $(DataFactory.Name)                     
-                    -AzureDataLakeStorage1_properties_typeProperties_url "https://$(DataLake.Name).dfs.core.windows.net"                     
+                    -AzureDataLakeStorage1_properties_typeProperties_url "https://$(DataLake.Name).dfs.core.windows.net"'
                   deploymentMode: 'Incremental'
               - task: AzurePowerShell@5
                 displayName: 'Start ADF Triggers'
