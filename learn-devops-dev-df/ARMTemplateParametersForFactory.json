@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "learn-devops-dev-df"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://learndevopsdevdl.dfs.core.windows.net"
+		}
+	}
+}
