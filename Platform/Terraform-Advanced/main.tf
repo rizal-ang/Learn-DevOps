@@ -47,6 +47,11 @@ resource "azurerm_databricks_workspace" "Databricks" {
     public_subnet_name  = azurerm_subnet.DatabricksSubnetPublic.name
     private_subnet_name = azurerm_subnet.DatabricksSubnetPrivate.name
   }
+
+  depends_on = [
+    azurerm_subnet_network_security_group_association.public,
+    azurerm_subnet_network_security_group_association.private
+  ]
 }
 
 resource "azurerm_virtual_network" "DatabricksVnet" {
