@@ -42,6 +42,6 @@ stages:
                   ConnectionString: 'Server=$(SQLServer.Name).database.windows.net;Initial Catalog=$(SQLDatabase.Name);Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
                   deployType: 'DacpacTask'
                   DeploymentAction: 'Publish'
-                  DacpacFile: '$(System.DefaultWorkingDirectory)\Platform\Database\$(SQLDatabase.SSDT)\bin\Release\$(SQLDatabase.SSDT).dacpac'
+                  DacpacFile: '$(System.DefaultWorkingDirectory)\Platform\Database\bin\Release\Database.dacpac'
                   IpDetectionMethod: 'AutoDetect'
                   AdditionalArguments: '/AccessToken:$(SQLToken) /p:BlockOnPossibleDataLoss=false /p:DropStatisticsNotInSource=true'
