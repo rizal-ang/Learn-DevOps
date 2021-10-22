@@ -5,3 +5,6 @@
 /Platform/Database/.vs/Database/v16/.suo
 /Platform/Database/obj/Debug/Database.sqlprojAssemblyReference.cache
 .vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/Platform/Database/Database.dbmdl
+/Platform/Database/Database.jfm
